@@ -1,14 +1,23 @@
-// src/pages/Home.jsx
-import React from 'react';
-import AnimatedHero from '../components/AnimatedHero';
-import About from '../components/About';
-import Projects from '../components/Projects';
-import Contact from '../components/Contact';
+import React from "react";
+import AnimatedHero from "../components/AnimatedHero";
+import About from "../components/About";
+import Projects from "../components/Projects";
+import Contact from "../components/Contact";
 
 const Home = () => {
   return (
-    <main className="w-screen min-h-screen bg-gradient-to-b from-blue-100 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* Hero Section with Animated Background */}
+    <main className="w-screen min-h-screen relative overflow-hidden 
+                     bg-gray-900 dark:bg-gray-900">
+
+      {/* ✅ Light Mode Animated Gradient Background */}
+      <div className="absolute inset-0 z-0 dark:hidden">
+        <div className="animated-gradient"></div>
+      </div>
+
+      {/* ✅ Custom Cursor */}
+      <div id="custom-cursor" className="hidden md:block"></div>
+
+      {/* Hero Section */}
       <AnimatedHero />
 
       {/* About Section */}

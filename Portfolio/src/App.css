@@ -1,3 +1,50 @@
+.bg-animated-gradient {
+  background: linear-gradient(270deg, #3b82f6, #9333ea, #f43f5e);
+  background-size: 600% 600%;
+  animation: gradientAnimation 20s ease infinite;
+}
+
+/* ✅ Animated Gradient Background (Light Mode) */
+.animated-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(-45deg, #ff6ec4, #7873f5, #43e97b, #38f9d7);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+  z-index: 0;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ✅ Fancy Custom Cursor */
+#custom-cursor {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, background-color 0.3s ease;
+  mix-blend-mode: difference;
+  z-index: 50;
+}
+
+
+
+
+
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

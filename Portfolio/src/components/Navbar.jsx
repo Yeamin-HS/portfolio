@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const Navbar = () => {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
 
   const toggleTheme = () => {
     document.documentElement.classList.toggle('dark');
