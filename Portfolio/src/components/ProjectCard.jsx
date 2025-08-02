@@ -1,16 +1,15 @@
-import { motion } from 'framer-motion';
+import React from 'react';
 
-const ProjectCard = ({ title, description }) => (
-  <motion.div
-    className="rounded-lg bg-white dark:bg-gray-800 shadow-md p-6 hover:shadow-xl transition-shadow"
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5 }}
-  >
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-gray-600 dark:text-gray-300">{description}</p>
-  </motion.div>
-);
+const ProjectCard = ({ title, description, image }) => {
+  return (
+    <div className="w-80 bg-[#111] border border-gray-700 rounded-xl shadow-lg overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-105">
+      <img src={image} alt={title} className="w-full h-48 object-cover" />
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+        <p className="text-gray-400 text-sm">{description}</p>
+      </div>
+    </div>
+  );
+};
 
 export default ProjectCard;
