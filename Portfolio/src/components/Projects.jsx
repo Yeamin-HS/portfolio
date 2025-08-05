@@ -1,13 +1,14 @@
-import React, { useState, useRef } from 'react';
+// src/components/Projects.jsx
+import React, { useRef, useState } from 'react';
 import ProjectCard from './ProjectCard';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const projects = [
   {
     title: 'Project One',
     description: 'A cool project about something awesome.',
-    image: '../src/assets/project1.png',
+    image: '/src/assets/project1.png',
   },
   {
     title: 'Project Two',
@@ -37,26 +38,41 @@ const projects = [
 ];
 
 const Projects = () => {
-  const [index, setIndex] = useState(0);
-  const visibleCards = 3;
-  const containerRef = useRef(null);
-  const [modalProject, setModalProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [offset, setOffset] = useState(0);
+  const scrollRef = useRef();
+  const CARD_WIDTH = 375;
+  const CARD_HEIGHT = 700;
+  const visibleCount = 3;
 
   const handleNext = () => {
-    if (index + visibleCards < projects.length) {
-      setIndex(index + 1);
+    if (offset + visibleCount < projects.length) {
+      setOffset(offset + 1);
     }
   };
 
   const handlePrev = () => {
-    if (index > 0) {
-      setIndex(index - 1);
+    if (offset > 0) {
+      setOffset(offset - 1);
     }
   };
 
-  const handleDrag = (e, info) => {
-    if (info.offset.x < -100) handleNext();
-    if (info.offset.x > 100) handlePrev();
+  const handleMouseDrag = (e) => {
+    const startX = e.clientX;
+    const handleMouseMove = (moveEvent) => {
+      const diff = moveEvent.clientX - startX;
+      if (diff > 100) {
+        handlePrev();
+        document.removeEventListener('mousemove', handleMouseMove);
+      } else if (diff < -100) {
+        handleNext();
+        document.removeEventListener('mousemove', handleMouseMove);
+      }
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    }, { once: true });
   };
 
   return (
@@ -65,60 +81,53 @@ const Projects = () => {
         <h2 className="text-4xl font-bold mb-8">My <span className="text-purple-400">Projects</span></h2>
 
         <div className="relative">
-          <div className="flex items-center justify-between mb-4">
-            <button onClick={handlePrev} className="text-gray-400 hover:text-white text-2xl">
+          <div className="absolute -left-10 top-1/2 transform -translate-y-1/2 z-10">
+            <button onClick={handlePrev} className="bg-gray-800 hover:bg-purple-500 text-white p-3 rounded-full">
               <FaChevronLeft />
             </button>
-            <button onClick={handleNext} className="text-gray-400 hover:text-white text-2xl">
+          </div>
+          <div className="absolute -right-10 top-1/2 transform -translate-y-1/2 z-10">
+            <button onClick={handleNext} className="bg-gray-800 hover:bg-purple-500 text-white p-3 rounded-full">
               <FaChevronRight />
             </button>
           </div>
 
-          <motion.div
-            className="overflow-hidden"
-            ref={containerRef}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={handleDrag}
-          >
-            <motion.div
-              className="flex gap-6 cursor-grab active:cursor-grabbing"
-              style={{ x: `-${index * 21.5}rem` }}
-              animate={{ x: `-${index * 21.5}rem` }}
-              transition={{ duration: 0.5, ease: 'easeInOut' }}
+          <div className="overflow-hidden cursor-grab" ref={scrollRef} onMouseDown={handleMouseDrag}>
+            <div
+              className="flex gap-6 transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${offset * (CARD_WIDTH + 15)}px)` }}
             >
               {projects.map((project, i) => (
-                <div key={i} onClick={() => setModalProject(project)}>
+                <motion.div
+                  key={i}
+                  whileHover={{ scale: 1.05, rotate: -2 }}
+                  className="flex-shrink-0"
+                  style={{ width: `${CARD_WIDTH}px` }}
+                  onClick={() => setSelectedProject(project)}
+                >
                   <ProjectCard {...project} />
-                </div>
+                </motion.div>
               ))}
-            </motion.div>
-          </motion.div>
-        </div>
+            </div>
+          </div>
 
-        <AnimatePresence>
-          {modalProject && (
-            <motion.div
-              className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setModalProject(null)}
-            >
-              <motion.div
-                className="bg-gray-900 text-white p-6 rounded-lg max-w-lg"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.8 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h3 className="text-2xl font-bold mb-2">{modalProject.title}</h3>
-                <img src={modalProject.image} alt={modalProject.title} className="rounded-lg mb-4" />
-                <p>{modalProject.description}</p>
-              </motion.div>
-            </motion.div>
+          {/* Modal */}
+          {selectedProject && (
+            <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-gray-900 p-6 rounded-lg max-w-lg text-white relative">
+                <button
+                  className="absolute top-2 right-3 text-2xl text-red-400 hover:text-red-600"
+                  onClick={() => setSelectedProject(null)}
+                >
+                  &times;
+                </button>
+                <img src={selectedProject.image} alt={selectedProject.title} className="w-full rounded mb-4" />
+                <h3 className="text-xl font-bold mb-2">{selectedProject.title}</h3>
+                <p>{selectedProject.description}</p>
+              </div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </section>
   );
